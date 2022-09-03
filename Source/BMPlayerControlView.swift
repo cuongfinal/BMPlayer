@@ -128,7 +128,9 @@ open class BMPlayerControlView: UIView {
         currentTimeLabel.text = BMPlayer.formatSecondsToString(currentTime)
         totalTimeLabel.text   = BMPlayer.formatSecondsToString(totalTime)
         timeSlider.value      = Float(currentTime) / Float(totalTime)
-        showSubtile(from: resource?.subtitle, at: currentTime)
+        if let subtitle = resource?.subtitle {
+            showSubtile(from: subtitle, at: currentTime)
+        }
     }
 
 
@@ -246,8 +248,8 @@ open class BMPlayerControlView: UIView {
         
         UIView.animate(withDuration: 0.3, animations: {[weak self] in
           guard let wSelf = self else { return }
-          wSelf.topMaskView.alpha    = alpha
-          wSelf.bottomMaskView.alpha = alpha
+//          wSelf.topMaskView.alpha    = alpha
+//          wSelf.bottomMaskView.alpha = alpha
           wSelf.mainMaskView.backgroundColor = UIColor(white: 0, alpha: isShow ? 0.4 : 0.0)
 
           if isShow {
@@ -445,8 +447,8 @@ open class BMPlayerControlView: UIView {
     
     
     // MARK: - private functions
-    fileprivate func showSubtile(from subtitle: BMSubtitles?, at time: TimeInterval) {
-        if let subtitle = subtitle, let group = subtitle.search(for: time) {
+    fileprivate func showSubtile(from subtitle: BMSubtitles, at time: TimeInterval) {
+        if let group = subtitle.search(for: time) {
             subtitleBackView.isHidden = false
             subtitleLabel.attributedText = NSAttributedString(string: group.text,
                                                               attributes: subtileAttribute)
