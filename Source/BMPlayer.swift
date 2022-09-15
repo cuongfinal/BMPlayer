@@ -17,6 +17,7 @@ public protocol BMPlayerDelegate : class {
     func bmPlayer(player: BMPlayer, playTimeDidChange currentTime : TimeInterval, totalTime: TimeInterval)
     func bmPlayer(player: BMPlayer, playerIsPlaying playing: Bool)
     func bmPlayer(player: BMPlayer, playerOrientChanged isFullscreen: Bool)
+    func bmPlayer(player: BMPlayer, playerDidTapOnReplay: Bool)
 }
 
 /**
@@ -539,7 +540,7 @@ extension BMPlayer: BMPlayerControlViewDelegate {
                 isPlayToTheEnd = false
                 seek(0)
                 play()
-                
+                delegate?.bmPlayer(player: self, playerDidTapOnReplay: true)
             case .fullscreen:
                 fullScreenButtonPressed()
                 
@@ -572,6 +573,12 @@ extension BMPlayer: BMPlayerControlViewDelegate {
                   self?.autoPlay()
                 })
             }
+        case .valueChanged:
+            let target = self.totalDuration * Double(slider.value)
+            
+            seek(target, completion: {[weak self] in
+              self?.autoPlay()
+            })
         default:
             break
         }
