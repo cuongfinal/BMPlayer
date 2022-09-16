@@ -536,13 +536,13 @@ extension BMPlayer: BMPlayerControlViewDelegate {
                     play()
                 }
                 
-            case .replay:
+            case .replay, .fullscreen:
                 isPlayToTheEnd = false
                 seek(0)
                 play()
                 delegate?.bmPlayer(player: self, playerDidTapOnReplay: true)
-            case .fullscreen:
-                fullScreenButtonPressed()
+//            case .fullscreen:
+//                fullScreenButtonPressed()
                 
             default:
                 print("[Error] unhandled Action")

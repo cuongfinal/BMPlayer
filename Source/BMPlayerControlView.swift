@@ -584,8 +584,12 @@ open class BMPlayerControlView: UIView {
         progressView.trackTintColor = UIColor ( red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3 )
         
         fullscreenButton.tag = BMPlayerControlView.ButtonType.fullscreen.rawValue
-        fullscreenButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_fullscreen"),    for: .normal)
-        fullscreenButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_portialscreen"), for: .selected)
+        if #available(iOS 13.0, *) {
+            fullscreenButton.setImage(UIImage(systemName: "goforward")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        } else {
+            fullscreenButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_replay"), for: .normal)
+        }
+//        fullscreenButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_replay"), for: .selected)
         fullscreenButton.addTarget(self, action: #selector(onButtonPressed(_:)), for: .touchUpInside)
         
         mainMaskView.addSubview(loadingIndicator)
@@ -711,7 +715,7 @@ open class BMPlayerControlView: UIView {
             make.left.equalTo(self.timeSlider.snp.right).offset(5)
             make.width.equalTo(40)
         }
-    
+        
         fullscreenButton.snp.makeConstraints { [unowned self](make) in
             make.width.equalTo(50)
             make.height.equalTo(50)
@@ -765,6 +769,31 @@ open class BMPlayerControlView: UIView {
     fileprivate func BMImageResourcePath(_ fileName: String) -> UIImage? {
         let bundle = Bundle(for: BMPlayer.self)
         return UIImage(named: fileName, in: bundle, compatibleWith: nil)
+    }
+    
+    public func updateTimeSliderFrame() {
+        if fullscreenButton.isHidden {
+            totalTimeLabel.snp.makeConstraints { [unowned self](make) in
+                make.centerY.equalTo(self.currentTimeLabel)
+                make.left.equalTo(self.timeSlider.snp.right).offset(5)
+                make.right.equalToSuperview()
+                make.width.equalTo(40)
+            }
+        } else {
+            totalTimeLabel.snp.makeConstraints { [unowned self](make) in
+                make.centerY.equalTo(self.currentTimeLabel)
+                make.left.equalTo(self.timeSlider.snp.right).offset(5)
+                make.width.equalTo(40)
+            }
+            
+            fullscreenButton.snp.makeConstraints { [unowned self](make) in
+                make.width.equalTo(50)
+                make.height.equalTo(50)
+                make.centerY.equalTo(self.currentTimeLabel)
+                make.left.equalTo(self.totalTimeLabel.snp.right)
+                make.right.equalToSuperview()
+            }
+        }
     }
 }
 
